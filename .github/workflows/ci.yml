@@ -1,0 +1,46 @@
+name: CI/CD Pipeline Build and Push to Docker Hub
+
+# 1. 트리거 조건: main 브랜치로 push 될 때 작동
+on:
+  push:
+    branches:
+      - main
+
+env:
+  # 사용할 Docker Hub 리포지토리 이름 (본인 ID에 맞게 수정 필요)
+  # 예: my_docker_id/ocr-api-server
+  DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/ocr-api-server
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 2. Github 리포지토리의 소스 코드를 Checkout
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      # 3. Docker 레이어 캐싱을 지원하는 Buildx 설정 (빌드 속도 최적화)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 4. Docker Hub 로그인 (Github Secrets 사용)
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 5. Docker 이미지 빌드 및 Push (캐싱 적극 활용)
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          # latest 태그와 git 커밋 해시 태그를 동시에 생성하여 버전 트래킹
+          tags: |
+            ${{ env.DOCKER_IMAGE }}:latest
+            ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+          # 이전 빌드의 일부 레이어를 재사용하여 빌드 시간 대폭 단축
+          cache-from: type=registry,ref=${{ env.DOCKER_IMAGE }}:buildcache
+          cache-to: type=registry,ref=${{ env.DOCKER_IMAGE }}:buildcache,mode=max
