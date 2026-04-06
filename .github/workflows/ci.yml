@@ -52,8 +52,8 @@ jobs:
     steps:
       # 자체 구축한 서버이기 때문에 기존 작업 디렉터리가 남아있지 않도록 보안상, 환경 초기화상 좋음
       - name: Docker Hub 로그인 (Private 이미지일 경우 대비)
-        # Windows 환경의 Self-hosted Runner에서도 잘 작동하도록 수정
-        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+        # Windows 환경의 cmd/powershell 파이프라인 이슈를 우회하기 위해 -p 옵션 사용
+        run: docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_TOKEN }}"
 
       - name: 최신 Docker 이미지 Pull
         run: docker pull ${{ env.DOCKER_IMAGE }}:latest
