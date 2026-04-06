@@ -5,15 +5,12 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# 3. Tesseract-OCR 및 한글 언어팩 등 시스템 의존성 설치
-# apt 캐시를 비워 이미지 크기를 최소화 (rm -rf /var/lib/apt/lists/*)
+# 3. EasyOCR 구동을 위한 OpenCV/시스템 의존성 설치 (libGL.so.1 오류 방지)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    tesseract-ocr \
-    tesseract-ocr-kor \
-    tesseract-ocr-eng \
+    libgl1 \
+    libglib2.0-0 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
 # 4. 작업 디렉터리 설정
 WORKDIR /app
 

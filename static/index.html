@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision OCR - AI Text Extraction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <!-- Background Decorators for premium look -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    <div class="bg-shape shape-3"></div>
+
+    <main class="container">
+        <!-- Glassmorphism Card -->
+        <div class="glass-card">
+            <header class="app-header">
+                <div class="icon-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scan-text"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 8h8"/><path d="M7 12h10"/><path d="M7 16h6"/></svg>
+                </div>
+                <h1>Vision<span class="highlight">OCR</span></h1>
+                <p>Upload any image to extract text instantly using advanced ML models.</p>
+            </header>
+
+            <div class="upload-section">
+                <!-- Dropzone -->
+                <div id="drop-zone" class="drop-zone">
+                    <input type="file" id="file-input" accept="image/*" hidden>
+                    <div class="drop-content">
+                        <div class="upload-icon-circle">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                        </div>
+                        <h3>Drag & drop your image here</h3>
+                        <p>or click to browse from your computer</p>
+                        <button class="browse-btn" onclick="document.getElementById('file-input').click()">Browse Files</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Section -->
+            <div id="result-section" class="result-section hidden">
+                
+                <!-- Loading State -->
+                <div id="loading" class="loading-state hidden">
+                    <div class="loader"></div>
+                    <p>Analyzing image and extracting text...</p>
+                </div>
+
+                <!-- Done State -->
+                <div id="result-content" class="result-content hidden">
+                    <div class="grid-layout">
+                        <div class="preview-panel">
+                            <div class="panel-header">Original Image</div>
+                            <div class="img-wrapper">
+                                <img id="preview-img" src="" alt="Uploaded image preview">
+                            </div>
+                        </div>
+                        
+                        <div class="text-panel">
+                            <div class="panel-header panel-header-split">
+                                <span>Extracted Text</span>
+                                <button id="copy-btn" class="copy-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <textarea id="extracted-text" readonly placeholder="Text will appear here..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <div id="toast" class="toast">Text copied to clipboard!</div>
+    <script src="/static/script.js"></script>
+</body>
+</html>
