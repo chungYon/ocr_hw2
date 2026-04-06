@@ -7,7 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewImg = document.getElementById('preview-img');
     const extractedText = document.getElementById('extracted-text');
     const copyBtn = document.getElementById('copy-btn');
+    const pdfBtn = document.getElementById('pdf-btn');
     const toast = document.getElementById('toast');
+    
+    let currentFile = null;
 
     // Handle Drag & Drop events
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -57,6 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Please upload an image file (PNG, JPG, etc).');
             return;
         }
+        
+        currentFile = file;
 
         // 1. Show Preview
         const reader = new FileReader();
@@ -78,6 +83,39 @@ document.addEventListener('DOMContentLoaded', () => {
         // 3. Send API Request
         uploadImage(file);
     }
+
+    // Handle PDF Button
+    pdfBtn.addEventListener('click', async () => {
+        if (!currentFile) return;
+        
+        const originalText = pdfBtn.innerHTML;
+        pdfBtn.innerText = 'Creating...';
+        const formData = new FormData();
+        formData.append('file', currentFile);
+        
+        try {
+            const response = await fetch('/ocr/pdf/', {
+                method: 'POST',
+                body: formData
+            });
+            if (!response.ok) throw new Error('Failed to generate PDF');
+            
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `OCR_Result_${Date.now()}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error(error);
+            alert('Error generating PDF');
+        } finally {
+            pdfBtn.innerHTML = originalText;
+        }
+    });
 
     async function uploadImage(file) {
         const formData = new FormData();
